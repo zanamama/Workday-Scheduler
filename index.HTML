@@ -20,7 +20,21 @@
     />
     <link rel="stylesheet" href="style.css" />
     <title>Work Day Scheduler</title>
-  </head>
+    <!--Bootstrap code for the next several lines. New nav bar for styling-->
+    <div class="collapse" id="navbarToggleExternalContent">
+      <div class="bg-dark p-4">
+       <h5 class="text-white h4">Collapsed content</h5>
+        <span class="text-muted">Toggleable via the navbar brand.</span>
+      </div>
+    </div>
+    <nav class="navbar navbar-dark bg-dark">
+      <div class="container-fluid">
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarToggleExternalContent" aria-controls="navbarToggleExternalContent" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+      </div>
+    </nav>
+    </head>
 
   <body>
     <header class="jumbotron">
@@ -64,5 +78,6 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
+    <script src="script.js"></script>
   </body>
 </html>
