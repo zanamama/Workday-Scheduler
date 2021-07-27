@@ -13,3 +13,7 @@ var description {
 
 })
 
+//listens for a click on save button
+$(".save-button").on('click', saveTask);
+//action added to save button
+timeBlockSave.on("click", saveTask);
