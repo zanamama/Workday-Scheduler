@@ -7,7 +7,7 @@
 
 textarea {
   background: transparent;
-  border: 5px;
+  border: none;
   resize: none;
   color: #000000;
   border-left: 1px solid black;
@@ -35,7 +35,6 @@ textarea {
 .row {
   white-space: pre-wrap;
   height: 80px;
-  border-style: bold;
   border-top: 1px solid white;
   background-color: lightsalmon;
 }
@@ -63,7 +62,8 @@ textarea {
 
 .saveBtn {
   border-left: 1px solid black;
-  border-radius: 15px;
+  border-top-right-radius: 15px;
+  border-bottom-right-radius: 15px;
   background-color: #06aed5;
   color: white;
   /* justify-content: end;
