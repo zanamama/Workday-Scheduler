@@ -1,78 +1,80 @@
-//DEPENDENCIES
-
-var currentDateHTML = $("#current-date");
-var savedEntries = "Try Here";
-var container = $(".container");
-var schedulerTimeTags = $(".input-group-text");
-
-//DATA with momentjs below
-
-var today = moment();
-var currentDate = today.format("MMM Do, YYYY");
-
-//FUNCTIONS
-
-function colorCodeEntries() {
-  var time = $(this)[0].innerText.toLowerCase();
-  time = moment(time, "HERE");
-  todaysTime = moment(today.format("HERE"), "HERE");
-  var colorClass = $(this).parent().siblings()[0].className;
-
-  if (time.isBefore(today.format("HERE"))) {
-    $(this).parent().siblings()[0].className = colorClass + " past";
-  } else if (time.isAfter(todaysTime)) {
-    $(this).parent().siblings()[0].className = colorClass + " future";
-  } else {
-    $(this).parent().siblings()[0].className = colorClass + " present";
-  }
+function displayCurrentDay() {
+  let initMoment = moment().format("dddd Do, MMMM YYYY");
+  $("#currentDay").text(initMoment);
 }
 
-function loadSavedEntries() {
-  savedEntries = JSON.parse(localStorage.getItem("savedEntries"));
+function createTimeBlock(theTime) {
+  let timeBlockRow = $("<div class='row'>");
+  let timeBlockHourCol = $(
+    "<div class='col-1 hour d-flex justify-content-end'>"
+  );
+  let timeBlockHour = $("<span class='hour-area'></span>");
+  let timeBlockTextareaCol = $("<div class='col-10 past px-0'>");
+  let timeBlockTextarea = $(
+    "<textarea name='' class='task-area description todo-block text-dark' id='' rows='4'></textarea>"
+  );
+  let timeBlockSaveCol = $("<div class='col-1 save-btn d-flex'>");
+  let timeBlockSave = $("<i class='fas fa-save m-auto fa-lg save-button'></i>");
 
-  if (savedEntries) {
-    for (var i = 0; i < savedEntries.length; i++) {
-      var currEntry = savedEntries[i];
+  // Add classes based on current hour
 
-      if (currEntry.date == currentDate) {
-        console.log(`.${currEntry.time}`.toLowerCase());
-        $(`#${currEntry.time}`.toLowerCase())
-          .parent()
-          .siblings()
-          .text(currEntry.entry);
-      }
-    }
+  let militaryTime = parseInt(moment().format("HH"));
+  theTime = parseInt(theTime);
+
+  if (theTime === militaryTime) {
+    timeBlockTextarea.addClass("present");
+  } else if (theTime > militaryTime) {
+    timeBlockTextarea.addClass("future");
   } else {
-    savedEntries = [];
+    // Not relevant as we already defaulted the class to past
+    timeBlockTextarea.addClass("past");
   }
 
-  return savedEntries;
+  // Build
+  let timeText = `${theTime > 11 ? `${theTime} PM` : `${theTime} AM`}`;
+  timeBlockHourCol = timeBlockHourCol.append(timeBlockHour).text(timeText);
+  timeBlockTextareaCol = timeBlockTextareaCol.append(timeBlockTextarea);
+  timeBlockSaveCol = timeBlockSaveCol.append(timeBlockSave);
+
+  let retrievedTodo = fetchTodo(timeText);
+  timeBlockTextarea.val(fetchTodo(timeText));
+
+  if (retrievedTodo) {
+    timeBlockTextarea.addClass("border border-5 border-info");
+  }
+
+  timeBlockRow.append(timeBlockHourCol);
+  timeBlockRow.append(timeBlockTextareaCol);
+  timeBlockRow.append(timeBlockSaveCol);
+  $(".container").append(timeBlockRow);
 }
 
-function saveEntry(event) {
-  event.preventDefault();
+function workingHours() {
+  for (let i = 9; i <= 17; i++) {
+    createTimeBlock(i);
+  }
 
-  var entry = $(this).parent().parent()[0][0].value;
-  var entryTime = $(this)
+  $(".save-button").on("click", saveTask);
+}
+
+function saveTask() {
+  let textAreaVal = $(this).parent().parent().find(".todo-block").val();
+  let hourVal = $(this).parent().parent().find(".hour").text();
+
+  $(this)
     .parent()
-    .siblings()
-    .children()
-    .children()[0] //get to the right place. start @ 0
-    .innerText.toUpperCase();
+    .parent()
+    .find(".todo-block")
+    .addClass("border border-success");
 
-  var savedEntry = {
-    date: currentDate,
-    time: entryTime,
-    entry: entry,
-  };
-
-  savedEntries.push(savedEntry);
+  localStorage.setItem(`${hourVal}`, `${textAreaVal}`);
 }
 
-//INITIALIZATION
+function fetchTodo(hour) {
+  let storedTextAreaVal = localStorage.getItem(`${hour}`);
+  return `${storedTextAreaVal ? storedTextAreaVal : ""}`;
+}
 
-currentDateHTML.text(currentDate);
-schedulerTimeTags.each(colorCodeEntries);
-savedEntries = loadSavedEntries();
-
-container.on("click", ".saveBtn", saveEntry);
+// INITIALIZATION
+displayCurrentDay();
+workingHours();
